@@ -4,6 +4,7 @@ const express = require('express'),
       port = 3000
       
 const mongoose = require("mongoose");
+const { request } = require('express');
 mongoose.connect("mongodb://localhost:27017/yelp_camp", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -13,10 +14,10 @@ app.use(bodyParser.urlencoded({extended: true}))
 app.set("view engine", "ejs")
 
 //Schema
-
 const campgroundSchema = new mongoose.Schema({
   name: String,
-  image: String
+  image: String,
+  description: String
 })
 
 //Creates a model or template using our campground Schema
@@ -30,17 +31,10 @@ app.get('/', (req, res) => {
 //INDEX - show all camps
 
 app.get('/campgrounds', (req, res) => {
-    // res.render('campgrounds', {campgrounds: campgrounds})
     Campground.find({}, (err, allCampgrounds) => {
       if(err) console.log(err)
-      else res.render("campgrounds", { campgrounds: allCampgrounds });
+      else res.render("index", { campgrounds: allCampgrounds });
     })
-})
-
-//NEW - show form to create new camp 
-
-app.get('/campgrounds/new', (req, res) => {
-    res.render('new.ejs')
 })
 
 //CREATE - add new camp to db
@@ -48,18 +42,27 @@ app.post('/campgrounds', (req, res) => {
     let name = req.body.name //this is the name of our first form
     let image = req.body.image //this is the name of our second form
     let newCampground = {name: name, image: image}
-    // Create new campground/save to db
+
     Campground.create(newCampground, (err, newlyCreated) => {
       if(err) console.log(err)
-      else     res.redirect("/campgrounds");
+      else res.redirect("/campgrounds");
     })
+})
+
+//NEW - show form to create new camp 
+
+app.get('/campgrounds/new', (req, res) => {
+    res.render('new')
 })
 
 //SHOW - id route to individual camp info - this url must be last 
 // as it is really /anything and we want /campgrounds etc to be specific
- 
+
 app.get("/campgrounds/:id", (req, res) => {
-  res.send("This will be the show page...")
+  Campground.findById(req.params.id, (err, foundCamp) => {
+    if (err) console.log("Error", err);
+    else res.render("show", { campground: foundCamp });
+  })
 })
 
 app.listen(port, () => console.log(`App listening at http://localhost:${port}`))
