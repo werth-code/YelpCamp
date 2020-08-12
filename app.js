@@ -41,7 +41,9 @@ app.get('/campgrounds', (req, res) => {
 app.post('/campgrounds', (req, res) => {
     let name = req.body.name //this is the name of our first form
     let image = req.body.image //this is the name of our second form
-    let newCampground = {name: name, image: image}
+    let desc = req.body.description; // NOT ADDING DESC TO DATABASE!
+
+    let newCampground = {name: name, image: image, description: desc}
 
     Campground.create(newCampground, (err, newlyCreated) => {
       if(err) console.log(err)
