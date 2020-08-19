@@ -1,8 +1,11 @@
 const express = require('express'),
       app = express(),
       bodyParser = require('body-parser'),
+      seedDB = require("./seeds"),
+      Campground = require("./models/campground.js"),
+      // Comment = require("./models/comment"),
       port = 3000
-      
+    
 const mongoose = require("mongoose");
 const { request } = require('express');
 mongoose.connect("mongodb://localhost:27017/yelp_camp", {
@@ -10,20 +13,10 @@ mongoose.connect("mongodb://localhost:27017/yelp_camp", {
     useUnifiedTopology: true,
   }).then(() => console.log("Connected to DB!")).catch((error) => console.log(error.message));
 
+seedDB()
+
 app.use(bodyParser.urlencoded({extended: true}))
 app.set("view engine", "ejs")
-
-//Schema
-const campgroundSchema = new mongoose.Schema({
-  name: String,
-  image: String,
-  description: String
-})
-
-//Creates a model or template using our campground Schema
-
-const Campground = mongoose.model("Campground", campgroundSchema)
-
 app.get('/', (req, res) => {
     res.render("landing")
 })
