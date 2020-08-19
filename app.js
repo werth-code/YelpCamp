@@ -3,11 +3,13 @@ const express = require('express'),
       bodyParser = require('body-parser'),
       seedDB = require("./seeds"),
       Campground = require("./models/campground.js"),
-      // Comment = require("./models/comment"),
+      Comment = require("./models/comment"),
       port = 3000
     
 const mongoose = require("mongoose");
 const { request } = require('express');
+const campground = require('./models/campground.js');
+const e = require('express');
 mongoose.connect("mongodb://localhost:27017/yelp_camp", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -69,6 +71,20 @@ app.get("/campgrounds/:id/comments/new", (req, res) => {
   Campground.findById(req.params.id, (err, campground) => {
     if(err) console.log("Error", err)
     else res.render("comments/new", {campground: campground})
+  })
+})
+
+app.post("/campgrounds/:id/comments", (req, res) => {
+  Campground.findById(req.params.id, (err, campground) => {
+    if(err) res.redirect("/campgrounds")
+    else Comment.create(req.body.comment, (err, comment) => {
+        if(err) console.log(err)
+        else {
+          campground.comments.push(comment)
+          campground.save()
+          res.redirect("/campgrounds/" + campground._id)
+        }
+    })  
   })
 })
 
