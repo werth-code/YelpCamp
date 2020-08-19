@@ -54,9 +54,12 @@ app.get('/campgrounds/new', (req, res) => {
 // as it is really /anything and we want /campgrounds etc to be specific
 
 app.get("/campgrounds/:id", (req, res) => {
-  Campground.findById(req.params.id, (err, foundCamp) => {
+  Campground.findById(req.params.id).populate("comments").exec( (err, foundCamp) => {
     if (err) console.log("Error", err);
-    else res.render("show", { campground: foundCamp });
+    else {
+      console.log(foundCamp)
+      res.render("show", { campground: foundCamp })
+    }  
   })
 })
 
