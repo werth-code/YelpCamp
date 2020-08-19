@@ -26,7 +26,7 @@ app.get('/', (req, res) => {
 app.get('/campgrounds', (req, res) => {
     Campground.find({}, (err, allCampgrounds) => {
       if(err) console.log(err)
-      else res.render("index", { campgrounds: allCampgrounds });
+      else res.render("campgrounds/index", { campgrounds: allCampgrounds });
     })
 })
 
@@ -47,7 +47,7 @@ app.post('/campgrounds', (req, res) => {
 //NEW - show form to create new camp 
 
 app.get('/campgrounds/new', (req, res) => {
-    res.render('new')
+    res.render('campgrounds/new')
 })
 
 //SHOW - id route to individual camp info - this url must be last 
@@ -58,8 +58,17 @@ app.get("/campgrounds/:id", (req, res) => {
     if (err) console.log("Error", err);
     else {
       console.log(foundCamp)
-      res.render("show", { campground: foundCamp })
+      res.render("campgrounds/show", { campground: foundCamp })
     }  
+  })
+})
+
+//-------- Comments Routes
+
+app.get("/campgrounds/:id/comments/new", (req, res) => {
+  Campground.findById(req.params.id, (err, campground) => {
+    if(err) console.log("Error", err)
+    else res.render("comments/new", {campground: campground})
   })
 })
 
