@@ -123,4 +123,24 @@ app.post("/register", (req, res) => {
   })
 })
 
+//Show Login Form
+
+app.get("/login", (req, res) => {
+  res.render("login")
+})
+
+app.post("/login", passport.authenticate("local", {
+    successRedirect: "/campgrounds",
+    failureRedirect: "/login"
+  }), (req, res) => {
+}) 
+
+//Log Out
+
+app.get("/logout", (req, res) => {
+  req.logout()
+  res.redirect("/campgrounds")
+})
+
+
 app.listen(port, () => console.log(`App listening at http://localhost:${port}`))
