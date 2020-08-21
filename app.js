@@ -1,12 +1,15 @@
-const express = require('express'),
-      app = express(),
-      bodyParser = require('body-parser'),
-      seedDB = require("./seeds"),
-      Campground = require("./models/campground.js"),
-      Comment = require("./models/comment"),
-      port = 3000
-    
-const mongoose = require("mongoose");
+const express = require("express"),
+  app = express(),
+  bodyParser = require("body-parser"),
+  mongoose = require("mongoose"),
+  passport = require("passport"),
+  LocalStrategy = require("passport-local"),
+  Campground = require("./models/campground.js"),
+  Comment = require("./models/comment"),
+  User = require("./models/user"),
+  seedDB = require("./seeds"),
+  port = 3000;
+      
 const { request } = require('express');
 const campground = require('./models/campground.js');
 const e = require('express');
@@ -16,6 +19,18 @@ mongoose.connect("mongodb://localhost:27017/yelp_camp", {
   }).then(() => console.log("Connected to DB!")).catch((error) => console.log(error.message));
 
 seedDB()
+
+//Passport Config
+app.use(require("express-session")({
+  secret: "peter piper picked a peck of pickled peppers",
+  resave: false,
+  saveUninitialized: false
+}))
+app.use(passport.initialize())
+app.use(passport.session())
+passport.use(new LocalStrategy(User.authenticate()))
+passport.serializeUser(User.serializeUser())
+passport.deserializeUser(User.deserializeUser())
 
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(express.static(__dirname + "/public"))
@@ -86,6 +101,25 @@ app.post("/campgrounds/:id/comments", (req, res) => {
           res.redirect("/campgrounds/" + campground._id)
         }
     })  
+  })
+})
+
+//Auth Routes
+
+app.get("/register", (req, res) => {
+  res.render("register")
+})
+
+app.post("/register", (req, res) => {
+  const newUser = new User({username: req.body.username})
+  User.register(newUser, req.body.password, (err, user) => {
+    if(err) {
+      console.log(err)
+      return res.render("register")
+    }
+    passport.authenticate("local")(req, res, () => {
+      res.redirect("/campgrounds")
+    })
   })
 })
 
