@@ -32,6 +32,11 @@ passport.use(new LocalStrategy(User.authenticate()))
 passport.serializeUser(User.serializeUser())
 passport.deserializeUser(User.deserializeUser())
 
+app.use( (req, res, next) => {
+  res.locals.currentUser = req.user
+  next()
+})
+
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(express.static(__dirname + "/public"))
 app.set("view engine", "ejs")
@@ -42,9 +47,13 @@ app.get('/', (req, res) => {
 //INDEX - show all camps
 
 app.get('/campgrounds', (req, res) => {
+    console.log(req.user)
     Campground.find({}, (err, allCampgrounds) => {
       if(err) console.log(err)
-      else res.render("campgrounds/index", { campgrounds: allCampgrounds });
+      else res.render("campgrounds/index", { 
+        campgrounds: allCampgrounds,
+        currentUser: req.user
+      });
     })
 })
 
@@ -83,26 +92,27 @@ app.get("/campgrounds/:id", (req, res) => {
 
 //-------- Comments Routes
 
-app.get("/campgrounds/:id/comments/new", (req, res) => {
+app.get("/campgrounds/:id/comments/new", isLoggedIn, (req, res) => {
   Campground.findById(req.params.id, (err, campground) => {
     if(err) console.log("Error", err)
     else res.render("comments/new", {campground: campground})
   })
 })
 
-app.post("/campgrounds/:id/comments", (req, res) => {
+app.post("/campgrounds/:id/comments", isLoggedIn, (req, res) => {
   Campground.findById(req.params.id, (err, campground) => {
-    if(err) res.redirect("/campgrounds")
-    else Comment.create(req.body.comment, (err, comment) => {
-        if(err) console.log(err)
+    if (err) res.redirect("/campgrounds");
+    else
+      Comment.create(req.body.comment, (err, comment) => {
+        if (err) console.log(err);
         else {
-          campground.comments.push(comment)
-          campground.save()
-          res.redirect("/campgrounds/" + campground._id)
+          campground.comments.push(comment);
+          campground.save();
+          res.redirect("/campgrounds/" + campground._id);
         }
-    })  
-  })
-})
+      });
+  });
+});
 
 //Auth Routes
 
@@ -141,6 +151,13 @@ app.get("/logout", (req, res) => {
   req.logout()
   res.redirect("/campgrounds")
 })
+
+function isLoggedIn(req, res, next) {
+  if(req.isAuthenticated()){
+    return next()
+  }
+  res.redirect("/login")
+}
 
 
 app.listen(port, () => console.log(`App listening at http://localhost:${port}`))
