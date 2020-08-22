@@ -3,7 +3,6 @@ const express = require("express"),
       Campground = require("../models/campground")
 
 router.get("/", (req, res) => {
-  console.log(req.user);
   Campground.find({}, (err, allCampgrounds) => {
     if (err) console.log(err);
     else
@@ -14,21 +13,31 @@ router.get("/", (req, res) => {
 });
 
 //CREATE - add new camp to db
-router.post("/", (req, res) => {
+router.post("/", isLoggedIn, (req, res) => {
   let name = req.body.name; //this is the name of our first form
   let image = req.body.image; //this is the name of our second form
   let desc = req.body.description; // NOT ADDING DESC TO DATABASE!
-  let newCampground = { name: name, image: image, description: desc };
+
+  let author = {
+    id: req.user._id,
+    username: req.user.username
+  }
+
+  let newCampground = { name: name, image: image, description: desc, author: author};
+  
 
   Campground.create(newCampground, (err, newlyCreated) => {
     if (err) console.log(err);
-    else res.redirect("/campgrounds");
+    else {
+      console.log(newlyCreated)
+      res.redirect("/campgrounds");
+    }
   });
 });
 
 //NEW - show form to create new camp
 
-router.get("/new", (req, res) => {
+router.get("/new", isLoggedIn, (req, res) => {
   res.render("campgrounds/new");
 });
 
@@ -47,5 +56,12 @@ router.get("/:id", (req, res) => {
     });
 });
 
+//Middleware
+function isLoggedIn(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect("/login");
+}
 
 module.exports = router
