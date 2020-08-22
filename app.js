@@ -46,8 +46,8 @@ app.use( (req, res, next) => {
 })
 
 app.use(indexRoutes)
-app.use(campgroundRoutes)
-app.use(commentRoutes)
+app.use("/campgrounds", campgroundRoutes) //this allows us to add prefix to the url. DRY coding.
+app.use("/campgrounds/:id/comments", commentRoutes) //
 
 
 app.listen(port, () => console.log(`App listening at http://localhost:${port}`))

@@ -1,17 +1,18 @@
 const express = require("express"),
-
-  router = express.Router(),
+  router = express.Router({mergeParams: true}),
   Campground = require("../models/campground"),
   Comment = require("../models/comment")
   
-router.get("/campgrounds/:id/comments/new", isLoggedIn, (req, res) => {
+//Comments New 
+router.get("/new", isLoggedIn, (req, res) => {
   Campground.findById(req.params.id, (err, campground) => {
     if (err) console.log("Error", err);
     else res.render("comments/new", { campground: campground });
   });
 });
 
-router.post("/campgrounds/:id/comments", isLoggedIn, (req, res) => {
+//Comments Create
+router.post("/", isLoggedIn, (req, res) => {
   Campground.findById(req.params.id, (err, campground) => {
     if (err) res.redirect("/campgrounds");
     else
@@ -26,6 +27,7 @@ router.post("/campgrounds/:id/comments", isLoggedIn, (req, res) => {
   });
 });
 
+//Middleware
 function isLoggedIn(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
