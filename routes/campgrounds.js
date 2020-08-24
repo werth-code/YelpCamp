@@ -1,3 +1,5 @@
+const campground = require("../models/campground");
+
 const express = require("express"),
       router = express.Router(),
       Campground = require("../models/campground")
@@ -55,6 +57,31 @@ router.get("/:id", (req, res) => {
       }
     });
 });
+
+//EDIT Camp Route
+router.get("/:id/edit", (req, res) => {
+  Campground.findById(req.params.id, ( err, foundCampground ) => {
+    if(err) res.redirect("/campgrounds")
+    else res.render("campgrounds/edit", { campground: foundCampground });
+  })
+})
+
+//UPDATE Camp Route
+
+router.put("/:id", ( req, res ) => {
+  Campground.findByIdAndUpdate(req.params.id, req.body.campground, ( err, updatedCampground ) => {
+    if(err) res.redirect("/campgrounds")
+    else res.redirect("/campgrounds/" + req.params.id)
+  })
+})
+
+//DELETE ROUTE
+router.delete("/:id", ( req, res ) => {
+  Campground.findByIdAndDelete(req.params.id, (err) => {
+    if(err) res.redirect("/campgrounds");
+  })
+  res.redirect("/campgrounds");
+})
 
 //Middleware
 function isLoggedIn(req, res, next) {

@@ -8,6 +8,7 @@ const express = require("express"),
   Comment = require("./models/comment"),
   User = require("./models/user"),
   seedDB = require("./seeds"),
+  methodOverride = require("method-override"),
   port = 3000;
 
 const commentRoutes = require("./routes/comments"),
@@ -15,14 +16,19 @@ const commentRoutes = require("./routes/comments"),
       indexRoutes = require("./routes/index")
       
 
-mongoose.connect("mongodb://localhost:27017/yelp_camp", {
+mongoose
+  .connect("mongodb://localhost:27017/yelp_camp", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-  }).then(() => console.log("Connected to DB!")).catch((error) => console.log(error.message));
+    useFindAndModify: false
+  })
+  .then(() => console.log("Connected to DB!"))
+  .catch((error) => console.log(error.message));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"));
+app.use(methodOverride("_method"))
 
 // seedDB() //Seed The Database
 
