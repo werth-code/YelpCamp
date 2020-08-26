@@ -20,6 +20,17 @@ const campgroundSchema = new mongoose.Schema({
     ]
 })
 
+// //This is a pre hook to remove all comments on deletion of post
+
+// const Comment = require("./comment");
+//     campgroundSchema.pre("remove", async function () {
+//     await Comment.deleteMany({
+//     _id: {
+//       $in: this.comments,
+//     },
+//   });
+// });
+
 module.exports = mongoose.model("Campground", campgroundSchema)
 
  
