@@ -9,6 +9,7 @@ const express = require("express"),
   User = require("./models/user"),
   seedDB = require("./seeds"),
   methodOverride = require("method-override"),
+  flash = require("connect-flash"),
   port = 3000;
 
 const commentRoutes = require("./routes/comments"),
@@ -29,6 +30,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"));
 app.use(methodOverride("_method"))
+app.use(flash())
 
 // seedDB() //Seed The Database
 
@@ -48,6 +50,8 @@ passport.deserializeUser(User.deserializeUser())
 //This is middlewear to add this variable to ALL routes!
 app.use( (req, res, next) => {
   res.locals.currentUser = req.user
+  res.locals.error = req.flash("error")
+  res.locals.success = req.flash("success")
   next()
 })
 
