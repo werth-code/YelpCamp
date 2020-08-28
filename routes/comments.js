@@ -39,11 +39,23 @@ router.post("/", middleware.isLoggedIn, (req, res) => { //we add our middleware 
 //Comments Edit Route
 
 router.get("/:comment_id/edit", middleware.checkCommentOwnership, ( req, res ) => {
-  Comment.findById(req.params.comment_id, (err, foundComment) => {
-    if(err) res.redirect("back")
-    else {
-      res.render("comments/edit", { campground_id: req.params.id, comment: foundComment });
+  Campground.findById(req.params.id, (err, foundCampground) => {
+    if(err || !foundCampground) {
+      req.flash("error", "No Campground Found!");
+      return res.redirect("back")
     }
+    Comment.findById(req.params.comment_id, (err, foundComment) => {
+      if (err || !foundComment) {
+        req.flash("error", "Comment Not Found!");
+        res.redirect("back");
+        } else {
+          req.flash("error", "You Don't Have Permission!");
+          res.render("comments/edit", {
+            campground_id: req.params.id,
+            comment: foundComment,
+        });
+      }
+    });
   })
 })
 

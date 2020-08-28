@@ -49,13 +49,12 @@ router.get("/new", middleware.isLoggedIn, (req, res) => {
 // as it is really /anything and we want /campgrounds etc to be specific
 
 router.get("/:id", (req, res) => {
-  Campground.findById(req.params.id)
-    .populate("comments")
-    .exec((err, foundCamp) => {
-      if (err) console.log("Error", err);
-      else {
-        console.log(foundCamp);
-        res.render("campgrounds/show", { campground: foundCamp });
+    Campground.findById(req.params.id).populate("comments").exec((err, foundCampground) => {
+      if (err || !foundCampground) {
+        req.flash("error", "Campground Not Found!")
+        res.redirect("back")
+      } else {
+        res.render("campgrounds/show", { campground: foundCampground });
       }
     });
 });
