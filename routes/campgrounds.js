@@ -20,6 +20,7 @@ router.get("/", (req, res) => {
 router.post("/", middleware.isLoggedIn, (req, res) => {
   let name = req.body.name; //this is the name of our first form
   let image = req.body.image; //this is the name of our second form
+  let price = req.body.price
   let desc = req.body.description; // NOT ADDING DESC TO DATABASE!
 
   let author = {
@@ -27,7 +28,7 @@ router.post("/", middleware.isLoggedIn, (req, res) => {
     username: req.user.username
   }
 
-  let newCampground = { name: name, image: image, description: desc, author: author};
+  let newCampground = { name: name, image: image, price: price, description: desc, author: author};
   
 
   Campground.create(newCampground, (err, newlyCreated) => {

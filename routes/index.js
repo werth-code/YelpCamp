@@ -22,7 +22,7 @@ router.post("/register", (req, res) => {
         res.redirect("back");
       } else {
       passport.authenticate("local")(req, res, () => {
-        req.flash("success", "Welcome!" + user.username);
+        req.flash("success", "Welcome! " + user.username);
         res.redirect("/campgrounds");
       });
     }

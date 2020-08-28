@@ -18,7 +18,7 @@ const commentRoutes = require("./routes/comments"),
       
 
 mongoose
-  .connect("mongodb://localhost:27017/yelp_camp", {
+  .connect("mongodb://localhost:27017/yelp_camp_final", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false
