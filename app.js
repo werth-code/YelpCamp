@@ -10,13 +10,14 @@ const express = require("express"),
   seedDB = require("./seeds"),
   methodOverride = require("method-override"),
   flash = require("connect-flash"),
-  port = process.env.PORT || 80;
+  
 
 const commentRoutes = require("./routes/comments"),
       campgroundRoutes = require("./routes/campgrounds"),
       indexRoutes = require("./routes/index")
       
 
+  // ! Local Server: mongodb://localhost:27017/yelp_camp_final //CHANGE PORT TO 3000 !
 mongoose
   .connect(
     "mongodb+srv://yelpCampUser:yelpCampUser@cluster0.rf97t.mongodb.net/database?retryWrites=true&w=majority",
@@ -29,8 +30,8 @@ mongoose
   .then(() => console.log("Connected to DB!"))
   .catch((error) => console.log(error.message));
 
-  //
-  // Local Server: mongodb://localhost:27017/yelp_camp_final
+  
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"));
@@ -65,4 +66,6 @@ app.use("/campgrounds", campgroundRoutes) //this allows us to add prefix to the 
 app.use("/campgrounds/:id/comments", commentRoutes) //
 
 
-app.listen(port, () => console.log(`App listening at http://localhost:${port}`))
+app.listen(process.env.PORT, process.env.IP, () => {
+  console.log("Server Has Started!")
+})
