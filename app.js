@@ -10,7 +10,7 @@ const express = require("express"),
   seedDB = require("./seeds"),
   methodOverride = require("method-override"),
   flash = require("connect-flash"),
-  
+  port = process.env.PORT || 80;
 
 const commentRoutes = require("./routes/comments"),
       campgroundRoutes = require("./routes/campgrounds"),
@@ -66,6 +66,4 @@ app.use("/campgrounds", campgroundRoutes) //this allows us to add prefix to the 
 app.use("/campgrounds/:id/comments", commentRoutes) //
 
 
-app.listen(process.env.PORT, process.env.IP, () => {
-  console.log("Server Has Started!")
-})
+app.listen(port, () => console.log(`App listening at http://localhost:${port}`))
