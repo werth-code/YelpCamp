@@ -16,11 +16,7 @@ const express = require("express"),
 const commentRoutes = require("./routes/comments"),
       campgroundRoutes = require("./routes/campgrounds"),
       indexRoutes = require("./routes/index")
-
-      console.log(process.env.MONGODB_URL)
       
-
-  // ! Local Server: mongodb://localhost:27017/yelp_camp_final //CHANGE PORT TO 3000 !
 mongoose
   .connect(process.env.MONGODB_URL, {
     useNewUrlParser: true,
