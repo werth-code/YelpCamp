@@ -12,21 +12,21 @@ const express = require("express"),
   flash = require("connect-flash"),
   port = process.env.PORT || 80;
 
+
 const commentRoutes = require("./routes/comments"),
       campgroundRoutes = require("./routes/campgrounds"),
       indexRoutes = require("./routes/index")
+
+      console.log(process.env.MONGODB_URL)
       
 
   // ! Local Server: mongodb://localhost:27017/yelp_camp_final //CHANGE PORT TO 3000 !
 mongoose
-  .connect(
-    "mongodb+srv://yelpCampUser:yelpCampUser@cluster0.rf97t.mongodb.net/database?retryWrites=true&w=majority",
-    {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      useFindAndModify: false,
-    }
-  )
+  .connect(process.env.MONGODB_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false,
+  })
   .then(() => console.log("Connected to DB!"))
   .catch((error) => console.log(error.message));
 
